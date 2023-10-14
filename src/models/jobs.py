@@ -15,7 +15,6 @@ class Job(Base):
     salary_to = sa.Column(sa.DECIMAL, comment='Зарплата до')
     is_active = sa.Column(sa.Boolean, comment='Активна ли вакансия', nullable=False)
     created_at = sa.Column(sa.DateTime, comment="Время создания записи", default=datetime.datetime.utcnow)
-    # добавьте ваши колонки сюда
 
     user = relationship("User", back_populates="jobs")
     responses = relationship("Response", back_populates="job")
