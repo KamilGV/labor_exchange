@@ -14,7 +14,7 @@ async def get_current_user(db: AsyncSession = Depends(get_db), token: str = Depe
     email: str = payload.get("sub")
     if email is None:
         raise cred_exception
-    user = await user_queries.get_by_email(db=db, email=email)
+    user = await user_queries.get_by_email(db=db, email=email, include_jobs=True)
     if user is None:
         raise cred_exception
     return user
