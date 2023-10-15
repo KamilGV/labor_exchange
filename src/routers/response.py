@@ -17,10 +17,7 @@ async def read_responses_by_job_id(
         job_id: int,
         db: AsyncSession = Depends(get_db),
         current_user: User = Depends(get_current_user)):
-    # TODO Поправить
     check = check_user_creator_job(job_id=job_id, user=current_user)
-    #print(current_user.jobs)
-    #for job in current_user.jobs:
 
     if not current_user.is_company or not check:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Unauthorized access")

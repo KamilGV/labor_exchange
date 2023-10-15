@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from models import Response, Job
+from models import Response, Job, User
 from sqlalchemy import select
 from typing import List
 from schemas import ResponseSchema, ResponseInSchema
@@ -25,7 +25,8 @@ async def get_responses_by_job_id(db: AsyncSession, job_id: int) -> List[Respons
     return res.scalars().all()
 
 
-async def check_user_creator_job(db: AsyncSession, job_id: int, user_id: int) -> bool:
-    query = select(Job).where(Job.id == job_id, Job.user_id == user_id).limit(1)
-    res = await db.execute(query)
-    return False if res.scalars().first() is None else True
+async def check_user_creator_job(job_id: int, user: User) -> bool:
+    for job in user.jobs:
+        if job.id == job_id:
+            return True
+    return False
