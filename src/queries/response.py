@@ -19,6 +19,12 @@ async def response_job(db: AsyncSession, response: ResponseInSchema, user_id: in
     return response
 
 
+async def delete_response_from_bd(db: AsyncSession, response: Response) -> Response:
+    await db.delete(response)
+    await db.commit()
+    return response
+
+
 async def get_responses_by_job_id(db: AsyncSession, job_id: int) -> List[Response]:
     query = select(Response).where(Response.job_id == job_id)
     res = await db.execute(query)
@@ -30,3 +36,12 @@ def check_user_creator_job(job_id: int, user: User) -> bool:
         if job.id == job_id:
             return True
     return False
+
+
+def get_response_user_job(job_id: int, user: User) -> Response | None:
+    for response in user.responses:
+        print(response)
+        print(response.job_id, job_id)
+        if response.job_id == job_id:
+            return response
+    return None

@@ -41,7 +41,7 @@ async def update(db: AsyncSession, user: User) -> User:
 async def get_by_email(db: AsyncSession, email: str, include_jobs: bool = False) -> User:
     query = select(User).where(User.email == email).limit(1)
     if include_jobs:
-        query = query.options(selectinload(User.jobs))
+        query = query.options(selectinload(User.jobs), selectinload(User.responses))
     res = await db.execute(query)
     user = res.scalars().first()
     return user
