@@ -1,10 +1,10 @@
-from models import User
+from models import User, Job
 from schemas import UserInSchema
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from core.security import hash_password
-
+from sqlalchemy.orm import selectinload
 
 async def get_all(db: AsyncSession, limit: int = 100, skip: int = 0) -> List[User]:
     query = select(User).limit(limit).offset(skip)
@@ -12,8 +12,8 @@ async def get_all(db: AsyncSession, limit: int = 100, skip: int = 0) -> List[Use
     return res.scalars().all()
 
 
-async def get_by_id(db: AsyncSession, id: int) -> Optional[User]:
-    query = select(User).where(User.id == id).limit(1)
+async def get_by_id(db: AsyncSession, user_id: int) -> Optional[User]:
+    query = select(User).where(User.id == user_id).limit(1)
     res = await db.execute(query)
     return res.scalars().first()
 
@@ -38,8 +38,10 @@ async def update(db: AsyncSession, user: User) -> User:
     return user
 
 
-async def get_by_email(db: AsyncSession, email: str) -> User:
+async def get_by_email(db: AsyncSession, email: str, include_jobs: bool = False) -> User:
     query = select(User).where(User.email == email).limit(1)
+    if include_jobs:
+        query = query.options(selectinload(User.jobs))
     res = await db.execute(query)
     user = res.scalars().first()
     return user
