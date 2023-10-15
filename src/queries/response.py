@@ -25,7 +25,7 @@ async def get_responses_by_job_id(db: AsyncSession, job_id: int) -> List[Respons
     return res.scalars().all()
 
 
-async def check_user_creator_job(job_id: int, user: User) -> bool:
+def check_user_creator_job(job_id: int, user: User) -> bool:
     for job in user.jobs:
         if job.id == job_id:
             return True

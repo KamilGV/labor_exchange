@@ -30,3 +30,10 @@ async def get_job_by_id(db: AsyncSession, job_id: int) -> Optional[Job]:
     query = select(Job).where(Job.id == job_id).limit(1)
     res = await db.execute(query)
     return res.scalars().first()
+
+
+async def update(db: AsyncSession, job: Job) -> Job:
+    db.add(job)
+    await db.commit()
+    await db.refresh(job)
+    return job
