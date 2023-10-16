@@ -32,6 +32,9 @@ async def post_response(
     if current_user.is_company:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Unauthorized access")
 
+    if response_queries.get_response_user_job(job_id=response.job_id, user=current_user):
+        raise HTTPException(status_code=409, detail="Response is exist")
+
     job = await get_job_by_id(db=db, job_id=response.job_id)
     if not job:
         raise HTTPException(status_code=409, detail="Job is not exist")
@@ -57,5 +60,3 @@ async def delete_response(
 
     response = await response_queries.delete_response(db=db, response=response)
     return response
-
-# TODO ошибка если отклик уже был
