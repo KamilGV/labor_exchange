@@ -40,8 +40,6 @@ def check_user_creator_job(job_id: int, user: User) -> bool:
 
 def get_response_user_job(job_id: int, user: User) -> Response | None:
     for response in user.responses:
-        print(response)
-        print(response.job_id, job_id)
         if response.job_id == job_id:
             return response
     return None
