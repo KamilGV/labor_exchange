@@ -38,5 +38,11 @@ class JobInSchema(BaseModel):
             raise ValueError("Неверный диапазон зарплаты!")
         return v
 
+
+class JobUpdateSchema(BaseModel):
+    id: int
+    title: str
+    description: str
+
 # TODO добавить в свагер описания полей, значения по умолчанию(примеры)
 # TODO переписать @validator

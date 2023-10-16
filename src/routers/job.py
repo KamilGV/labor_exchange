@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from dependencies import get_db, get_current_user
 from typing import List
 from queries import job as job_queries, response as response_queries
-from schemas import JobSchema, JobInSchema
+from schemas import JobSchema, JobInSchema, JobUpdateSchema
 from models import Job, User
 
 
@@ -50,4 +50,26 @@ async def delete_job(
     updated_job = await job_queries.update(db=db, job=job)
     return JobSchema.model_validate(updated_job)
 
+
+@router.put("", response_model=JobSchema)
+async def update_job(
+        job: JobUpdateSchema,
+        db: AsyncSession = Depends(get_db),
+        current_user: User = Depends(get_current_user)):
+
+    check = response_queries.check_user_creator_job(job_id=job.id, user=current_user)
+    if not check:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Unauthorized access")
+
+    old_job = await job_queries.get_job_by_id(db=db, job_id=job.id)
+    if not old_job:
+        raise HTTPException(status_code=406, detail="Job not exist")
+    if not old_job.is_active:
+        raise HTTPException(status_code=409, detail="Job already deleted")
+
+    old_job.title = job.title if job.title is not None else old_job.title
+    old_job.description = job.description if job.description is not None else old_job.description
+
+    updated_job = await job_queries.update(db=db, job=old_job)
+    return JobSchema.model_validate(updated_job)
 
