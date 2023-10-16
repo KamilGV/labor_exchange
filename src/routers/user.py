@@ -51,7 +51,7 @@ async def update_user(
     return UserSchema.from_orm(new_user)
 
 
-@router.put("", response_model=UserSchema)
+@router.delete("", response_model=UserSchema)
 async def delete_user(
         db: AsyncSession = Depends(get_db),
         current_user: User = Depends(get_current_user)):
