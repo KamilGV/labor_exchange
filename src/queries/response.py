@@ -19,7 +19,7 @@ async def response_job(db: AsyncSession, response: ResponseInSchema, user_id: in
     return response
 
 
-async def delete_response_from_bd(db: AsyncSession, response: Response) -> Response:
+async def delete_response(db: AsyncSession, response: Response) -> Response:
     await db.delete(response)
     await db.commit()
     return response
