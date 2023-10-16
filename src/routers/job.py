@@ -35,13 +35,14 @@ async def delete_job(
         job_id: int,
         db: AsyncSession = Depends(get_db),
         current_user: User = Depends(get_current_user)):
-    job = await job_queries.get_job_by_id(db=db, job_id=job_id)
-    if not job:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Unauthorized access")
 
     check = response_queries.check_user_creator_job(job_id=job_id, user=current_user)
     if not check:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Unauthorized access")
+
+    job = await job_queries.get_job_by_id(db=db, job_id=job_id)
+    if not job:
+        raise HTTPException(status_code=406, detail="Job not exist")
     if not job.is_active:
         raise HTTPException(status_code=409, detail="Job already deleted")
 
