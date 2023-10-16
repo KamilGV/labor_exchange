@@ -37,7 +37,7 @@ async def post_response(
 
     job = await get_job_by_id(db=db, job_id=response.job_id)
     if not job:
-        raise HTTPException(status_code=409, detail="Job is not exist")
+        raise HTTPException(status_code=406, detail="Job not exist")
     if not job.is_active:
         raise HTTPException(status_code=409, detail="Job is not active")
 
