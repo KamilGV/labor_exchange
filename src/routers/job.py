@@ -47,7 +47,7 @@ async def delete_job(
         raise HTTPException(status_code=409, detail="Job already deleted")
 
     job.is_active = False
-    update_job = await job_queries.update(db=db, job=job)
-    return JobSchema.model_validate(update_job)
+    updated_job = await job_queries.update(db=db, job=job)
+    return JobSchema.model_validate(updated_job)
 
 
