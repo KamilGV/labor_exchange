@@ -6,6 +6,7 @@ from sqlalchemy import select
 from core.security import hash_password
 from sqlalchemy.orm import selectinload
 
+
 async def get_all(db: AsyncSession, limit: int = 100, skip: int = 0) -> List[User]:
     query = select(User).limit(limit).offset(skip)
     res = await db.execute(query)
@@ -45,3 +46,8 @@ async def get_by_email(db: AsyncSession, email: str, include_jobs: bool = False)
     res = await db.execute(query)
     user = res.scalars().first()
     return user
+
+
+async def delete_user(db: AsyncSession, user: User) -> None:
+    await db.delete(user)
+    await db.commit()
