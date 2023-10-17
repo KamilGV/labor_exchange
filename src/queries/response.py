@@ -32,10 +32,7 @@ async def get_responses_by_job_id(db: AsyncSession, job_id: int) -> List[Respons
 
 
 def check_user_creator_job(job_id: int, user: User) -> bool:
-    for job in user.jobs:
-        if job.id == job_id:
-            return True
-    return False
+    return any([True if job.id == job_id else False for job in user.jobs])
 
 
 def get_response_user_job(job_id: int, user: User) -> Response | None:
