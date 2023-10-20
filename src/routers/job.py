@@ -67,8 +67,10 @@ async def update_job(
     if not old_job.is_active:
         raise HTTPException(status_code=409, detail="Job already deleted")
 
-    old_job.title = job.title if job.title is not None else old_job.title
-    old_job.description = job.description if job.description is not None else old_job.description
+    old_job.title = job.title
+    old_job.description = job.description
+    old_job.salary_from = job.salary_from
+    old_job.salary_to = job.salary_to
 
     updated_job = await job_queries.update(db=db, job=old_job)
     return JobSchema.model_validate(updated_job)
