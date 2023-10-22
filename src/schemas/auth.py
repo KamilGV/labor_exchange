@@ -9,3 +9,15 @@ class TokenSchema(BaseModel):
 class LoginSchema(BaseModel):
     email: EmailStr
     password: str
+
+    model_config = {
+        "from_attributes": True,
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "email": "ivanivanov@mail.com",
+                    "password": "mypasword123",
+                }
+            ]
+        }
+    }

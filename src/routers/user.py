@@ -25,6 +25,7 @@ async def create_user(user: UserInSchema, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=409, detail="User already exists")
 
     user = await user_queries.create(db=db, user_schema=user)
+
     return UserSchema.model_validate(user)
 
 
@@ -48,7 +49,7 @@ async def update_user(
 
     new_user = await user_queries.update(db=db, user=old_user)
 
-    return UserSchema.from_orm(new_user)
+    return UserSchema.model_validate(new_user)
 
 
 @router.delete("", response_model=UserSchema)
