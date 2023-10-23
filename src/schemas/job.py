@@ -44,7 +44,7 @@ class JobInSchema(BaseModel):
 
     @field_validator("salary_to")
     @classmethod
-    def password_match(cls, v, info: FieldValidationInfo, **kwargs):
+    def salary_range(cls, v, info: FieldValidationInfo, **kwargs):
         if v is not None and info.data["salary_from"] is not None:
             if v < info.data["salary_from"]:
                 raise ValueError("Неверный диапазон зарплаты!")
@@ -75,7 +75,7 @@ class JobUpdateSchema(BaseModel):
 
     @field_validator("salary_to")
     @classmethod
-    def password_match(cls, v, info: FieldValidationInfo, **kwargs):
+    def salary_range(cls, v, info: FieldValidationInfo, **kwargs):
         if v is not None and info.data["salary_from"] is not None:
             if v < info.data["salary_from"]:
                 raise ValueError("Неверный диапазон зарплаты!")
