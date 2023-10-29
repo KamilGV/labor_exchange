@@ -1,5 +1,6 @@
 import asyncio
 
+from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from fixtures.users import UserFactory
@@ -26,8 +27,14 @@ async def sa_session():
     Session = sessionmaker(connection, expire_on_commit=False, class_=AsyncSession)
     session = Session()
 
+    deletion = session.delete
+
     async def mock_delete(instance):
-        session.expunge(instance)
+        insp = inspect(instance)
+        if not insp.persistent:
+            session.expunge(instance)
+        else:
+            await deletion(instance)
         return await asyncio.sleep(0)
 
     session.commit = MagicMock(side_effect=session.flush)
