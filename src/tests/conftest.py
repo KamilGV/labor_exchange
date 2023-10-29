@@ -48,6 +48,17 @@ async def sa_session():
         await engine.dispose()
 
 
+@pytest_asyncio.fixture()
+async def test_user(sa_session: AsyncSession):
+    new_user = UserFactory.build()
+    sa_session.add(new_user)
+
+    await sa_session.commit()
+    await sa_session.refresh(new_user)
+
+    return new_user
+
+
 # регистрация фабрик
 @pytest_asyncio.fixture(autouse=True)
 def setup_factories(sa_session: AsyncSession) -> None:
