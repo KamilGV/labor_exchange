@@ -66,4 +66,4 @@ async def test_delete_response(sa_session, test_user: User):
 
     deleted_response = await response_query.get_responses_by_job_id(db=sa_session, job_id=job.id)
 
-    assert len(deleted_response) == 0
+    assert not deleted_response
