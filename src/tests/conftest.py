@@ -55,17 +55,6 @@ async def sa_session():
         await engine.dispose()
 
 
-@pytest_asyncio.fixture()
-async def test_user(sa_session: AsyncSession) -> User:
-    new_user = UserFactory.build()
-    sa_session.add(new_user)
-
-    await sa_session.commit()
-    await sa_session.refresh(new_user)
-
-    return new_user
-
-
 # регистрация фабрик
 @pytest_asyncio.fixture(autouse=True)
 def setup_factories(sa_session: AsyncSession) -> None:
@@ -75,7 +64,31 @@ def setup_factories(sa_session: AsyncSession) -> None:
 
 
 @pytest_asyncio.fixture()
-async def access_token(test_user: User):
+async def test_user(sa_session: AsyncSession) -> User:
+    new_user = UserFactory.build()
+    new_user.is_company = False
+    sa_session.add(new_user)
+
+    await sa_session.commit()
+    await sa_session.refresh(new_user)
+
+    return new_user
+
+
+@pytest_asyncio.fixture()
+async def test_company(sa_session: AsyncSession) -> User:
+    new_user = UserFactory.build()
+    new_user.is_company = True
+    sa_session.add(new_user)
+
+    await sa_session.commit()
+    await sa_session.refresh(new_user)
+
+    return new_user
+
+
+@pytest_asyncio.fixture()
+async def access_token_user(test_user: User):
     token = TokenSchema(
         access_token=create_access_token({"sub": test_user.email}),
         token_type="Bearer"
@@ -84,15 +97,34 @@ async def access_token(test_user: User):
 
 
 @pytest_asyncio.fixture()
-async def test_app(sa_session, access_token: TokenSchema):
+async def access_token_company(test_company: User):
+    token = TokenSchema(
+        access_token=create_access_token({"sub": test_company.email}),
+        token_type="Bearer"
+    )
+    return token
+
+
+@pytest_asyncio.fixture()
+async def test_app_user(sa_session, access_token_user: TokenSchema):
     app.dependency_overrides[get_db] = lambda: sa_session
 
     async with AsyncClient(app=app, base_url="http://test") as client:
-        client.headers["Authorization"] = f"Bearer {access_token.access_token}"
+        client.headers["Authorization"] = f"Bearer {access_token_user.access_token}"
         yield client
 
+
 @pytest_asyncio.fixture()
-async def test_app_unauthorized(sa_session, access_token: TokenSchema):
+async def test_app_company(sa_session, access_token_company: TokenSchema):
+    app.dependency_overrides[get_db] = lambda: sa_session
+
+    async with AsyncClient(app=app, base_url="http://test") as client:
+        client.headers["Authorization"] = f"Bearer {access_token_company.access_token}"
+        yield client
+
+
+@pytest_asyncio.fixture()
+async def test_app_unauthorized(sa_session, access_token_user: TokenSchema):
     app.dependency_overrides[get_db] = lambda: sa_session
 
     async with AsyncClient(app=app, base_url="http://test") as client:
