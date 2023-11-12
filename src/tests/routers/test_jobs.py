@@ -61,6 +61,7 @@ async def test_read_job(test_app_unauthorized):
 async def test_update_job(sa_session, test_app_company, test_company: User):
     job = JobFactory.build()
     job.user_id = test_company.id
+    job.is_active = True
     sa_session.add(job)
     sa_session.flush()
 
