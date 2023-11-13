@@ -62,6 +62,10 @@ def setup_factories(sa_session: AsyncSession) -> None:
     JobFactory.session = sa_session
     ResponseFactory.session = sa_session
 
+    UserFactory.reset_sequence(0, force=True)
+    JobFactory.reset_sequence(0, force=True)
+    ResponseFactory.reset_sequence(0, force=True)
+
 
 @pytest_asyncio.fixture()
 async def test_user(sa_session: AsyncSession) -> User:

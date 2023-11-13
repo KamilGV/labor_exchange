@@ -117,7 +117,7 @@ async def test_delete_response(sa_session, test_app_user, test_user: User, test_
     sa_session.add(response)
     sa_session.flush()
 
-    responses = await test_app_user.delete(url=f"/response?job_id={response.id}")
+    responses = await test_app_user.delete(url=f"/response?job_id={job.id}")
 
     assert responses.status_code == status.HTTP_200_OK
 
@@ -135,7 +135,7 @@ async def test_delete_response_as_company(sa_session, test_app_company, test_use
     sa_session.add(response)
     sa_session.flush()
 
-    responses = await test_app_company.delete(url=f"/response?job_id={response.id}")
+    responses = await test_app_company.delete(url=f"/response?job_id={job.id}")
 
     assert responses.status_code == status.HTTP_403_FORBIDDEN
 
