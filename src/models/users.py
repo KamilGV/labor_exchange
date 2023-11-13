@@ -1,20 +1,20 @@
 import datetime
-
-from sqlalchemy.orm import relationship
-
+from sqlalchemy.orm import relationship, mapped_column, Mapped
 from db_settings import Base
 import sqlalchemy as sa
+from typing import List
 
 
 class User(Base):
     __tablename__ = "users"
 
-    id = sa.Column(sa.Integer, primary_key=True, autoincrement=True, comment="Идентификатор задачи")
-    email = sa.Column(sa.String, comment="Email адрес", unique=True)
-    name = sa.Column(sa.String, comment="Имя пользователя")
-    hashed_password = sa.Column(sa.String, comment="Зашифрованный пароль")
-    is_company = sa.Column(sa.Boolean, comment="Флаг компании")
-    created_at = sa.Column(sa.DateTime, comment="Время создания записи", default=datetime.datetime.utcnow)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, comment="Идентификатор задачи")
+    email: Mapped[str] = mapped_column(comment="Email адрес", unique=True)
+    name: Mapped[str] = mapped_column(comment="Имя пользователя")
+    hashed_password: Mapped[str] = mapped_column(comment="Зашифрованный пароль")
+    is_company: Mapped[bool] = mapped_column(comment="Флаг компании")
+    created_at: Mapped[datetime.datetime] = mapped_column(comment="Время создания записи",
+                                                          default=datetime.datetime.utcnow)
 
-    jobs = relationship("Job", back_populates="user")
-    responses = relationship("Response", back_populates="user")
+    jobs: Mapped[List["Job"]] = relationship(back_populates="user")
+    responses: Mapped[List["Response"]] = relationship(back_populates="user")
