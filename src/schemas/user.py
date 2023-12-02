@@ -3,6 +3,7 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr, validator, constr, ConfigDict, field_validator
 from pydantic_core.core_schema import FieldValidationInfo
 
+
 class UserSchema(BaseModel):
 
     id: Optional[int] = None
@@ -60,7 +61,7 @@ class UserInSchema(BaseModel):
     def password_match(cls, v, info: FieldValidationInfo, **kwargs):
         if 'password' in info.data and v != info.data["password"]:
             raise ValueError("Пароли не совпадают!")
-        return True
+        return info.data["password"]
 
     model_config = {
         "from_attributes": True,
