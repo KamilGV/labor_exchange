@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.orm import sessionmaker, scoped_session, DeclarativeBase
 import os
 
 STAGE = os.environ.get("STAGE", "prod")
@@ -24,4 +24,5 @@ engine = create_async_engine(
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession))
 
 
-Base = declarative_base()
+class Base(DeclarativeBase):
+    pass
